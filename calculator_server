@@ -1,0 +1,59 @@
+package myPackage;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.StringTokenizer;
+
+public class calculator_server {
+    public static void main(String args[]) throws IOException {
+
+        // Create a server socket with port 4444
+        ServerSocket ss = new ServerSocket(4444);
+        
+        // Accept incoming client connection
+        Socket s = ss.accept();
+
+        // Create input and output streams for communication with the client
+        DataInputStream dis = new DataInputStream(s.getInputStream());
+        DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+
+        // Continuous loop to handle incoming requests
+        while (true) {
+            // Read the input from the client
+            String input = dis.readUTF();
+
+            // Check if the client wants to exit
+            if (input.equals("bye"))
+                break;
+
+            // Display the received equation
+            System.out.println("Equation received: " + input);
+            int result;
+
+            // Tokenize the input to get operands and operation
+            StringTokenizer st = new StringTokenizer(input);
+
+            int oprnd1 = Integer.parseInt(st.nextToken());
+            String operation = st.nextToken();
+            int oprnd2 = Integer.parseInt(st.nextToken());
+
+            // Perform the specified operation
+            if (operation.equals("+")) {
+                result = oprnd1 + oprnd2;
+            } else if (operation.equals("-")) {
+                result = oprnd1 - oprnd2;
+            } else if (operation.equals("*")) {
+                result = oprnd1 * oprnd2;
+            } else {
+                result = oprnd1 / oprnd2;
+            }
+            
+            // Display a message and send the result back to the client
+            System.out.println("Sending the result...");
+            dos.writeUTF(Integer.toString(result));
+        }
+    }
+}
