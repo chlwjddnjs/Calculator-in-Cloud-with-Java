@@ -1,0 +1,51 @@
+package myPackage;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Scanner;
+
+public class calculator_client {
+    public static void main(String[] args) throws IOException {
+
+        // Get the IP address of the local host
+        InetAddress ip = InetAddress.getLocalHost();
+
+        // Define the port number to establish the connection
+        int port = 4444;
+
+        // Create a Scanner object to read user input
+        Scanner sc = new Scanner(System.in);
+
+        // Create a socket to connect to the server
+        Socket s = new Socket(ip, port);
+
+        // Create input and output streams for communication with the server
+        DataInputStream dis = new DataInputStream(s.getInputStream());
+        DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+
+        // Continuous loop to interact with the server
+        while (true) {
+            // Prompt the user to enter an equation in a specific format
+            System.out.print("Enter the equation in the form: ");
+            System.out.println("'operand operator operand'");
+
+            // Read the user input
+            String inp = sc.nextLine();
+
+            // Check if the user wants to exit
+            if (inp.equals("bye"))
+                break;
+
+            // Send the input equation to the server
+            dos.writeUTF(inp);
+
+            // Receive and display the result from the server
+            String ans = dis.readUTF();
+            System.out.println("Answer=" + ans);
+        }
+    }
+}
